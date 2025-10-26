@@ -1,0 +1,80 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  email     String   @unique
+  password  String?
+  phone     String?
+  googleId  String?  @unique
+  name      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  orders    Order[]
+  addresses Address[]
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+model Address {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId  String   @db.ObjectId
+  type     String
+  name     String
+  mobile   String
+  flatNo   String
+  buildingName String
+  street   String
+  landmark String
+  pincode  String
+  locality String
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model Order {
+  id         String    @id @default(auto()) @map("_id") @db.ObjectId
+  userId     String   @db.ObjectId
+  items      Json[]
+  totalAmount Float
+  status     String @default("PENDING")
+  address    Json
+  createdAt  DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id])
+  paymentMethod String? @default("ONLINE")
+  payentId    String?
+  razorpayOrderId String
+}
+
+model Category {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String 
+  imageUrl  String  
+  products  Product[]
+  createdAt DateTime @default(now())
+}
+
+model Product {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  categoryId  String   @db.ObjectId
+  name        String
+  price       Float
+  imageUrl    String?
+  description String?
+  category    Category @relation(fields: [categoryId], references: [id])
+  createdAt   DateTime @default(now())
+}
