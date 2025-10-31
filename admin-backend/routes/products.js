@@ -1,5 +1,5 @@
 const express = require('express');
-const validate = require('../middleware/validation');
+const validate = require('../middlewares/validation');
 const z = require("zod"); 
 const { createProduct, deleteProduct, getProduct, getProducts, updateProduct } = require('../controllers/products');
 
