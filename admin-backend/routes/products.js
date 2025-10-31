@@ -1,8 +1,7 @@
-import { createProduct, deleteProduct, getProduct, getProducts, updateProduct } from '../controllers/products';
-
 const express = require('express');
 const validate = require('../middleware/validation');
 const z = require("zod"); 
+const { createProduct, deleteProduct, getProduct, getProducts, updateProduct } = require('../controllers/products');
 
 const router = express.Router();
 
