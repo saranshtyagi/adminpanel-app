@@ -30,7 +30,6 @@ async function getProductsByCategory(req, res) {
 async function createCategory(req, res) {
   const { name, imageUrl } = req.body;
   const category = await prisma.category.create({
-    where: { id },
     data: { name, imageUrl },
   });
   res.json(category);
