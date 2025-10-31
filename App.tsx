@@ -1,15 +1,19 @@
 import React from 'react';
-import { StatusBar } from 'expo-status-bar';
 import { StyleSheet } from 'react-native';
 import "./global.css";
 import RootNavigator from './src/navigation/RootNavigator';
 import { NavigationContainer } from '@react-navigation/native';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+const queryClient = new QueryClient();
 
 export default function App() {
   return (
-    <NavigationContainer>
-      <RootNavigator />
-    </NavigationContainer>
+    <QueryClientProvider client={queryClient}>
+      <NavigationContainer>
+        <RootNavigator />
+      </NavigationContainer>
+    </QueryClientProvider>
   );
 }
 
