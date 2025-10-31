@@ -19,14 +19,26 @@ const AddCategoryScreen = () => {
   const queryClient = useQueryClient();
 
   const mutation = useMutation({
-    mutationFn:({name, imageUrl}: {name:string; imageUrl?:string}) => createCategory({name, imageUrl}),
+    mutationFn: ({ name, imageUrl }: { name: string; imageUrl?: string }) =>
+      createCategory({ name, imageUrl }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['categories'] });
+      queryClient.invalidateQueries({ queryKey: ["categories"] });
       navigation.goBack();
-    }
-  })
+    },
+    onError: (error: any) => {
+      console.error(
+        "Create category failed:",
+        error.response?.data || error.message
+      );
+      alert("Failed to create category. Please check your server connection.");
+    },
+  });
 
-  const onSubmit = (data: {name:string; imageUrl?:string}) => mutation.mutate({name:data?.name, imageUrl:data?.imageUrl || undefined});
+  const onSubmit = (data: { name: string; imageUrl?: string }) =>
+    mutation.mutate({
+      name: data?.name,
+      imageUrl: data?.imageUrl || undefined,
+    });
 
   return (
     <View className="flex-1 bg-gray-50 p-4">
@@ -36,7 +48,9 @@ const AddCategoryScreen = () => {
       <Text className="text-sm text-gray-600 mb-4">
         Give it a short, clear name
       </Text>
-      <Text className="text-sm font-medium text-gray-700 mb-2">Category Name</Text>
+      <Text className="text-sm font-medium text-gray-700 mb-2">
+        Category Name
+      </Text>
       <Controller
         control={control}
         name="name"
@@ -53,12 +67,21 @@ const AddCategoryScreen = () => {
           />
         )}
       />
-      {errors?.name && <Text className="text-red-500 mt-2">{errors.name.message}</Text>}
-      <Text className="text-sm font-medium text-gray-700 mb-2 mt-4">Image URL</Text>
+      {errors?.name && (
+        <Text className="text-red-500 mt-2">{errors.name.message}</Text>
+      )}
+      <Text className="text-sm font-medium text-gray-700 mb-2 mt-4">
+        Image URL
+      </Text>
       <Controller
         control={control}
         name="imageUrl"
-        rules={{ pattern: { value: /^(https?:\/\/.*\.(?:png|jpg|jpeg|gif|svg))$/i, message: "Invalid URL" } }}
+        rules={{
+          pattern: {
+            value: /^(https?:\/\/(?:www\.)?[^\s/$.?#].[^\s]*)$/i,
+            message: "Invalid URL",
+          },
+        }}
         render={({ field: { onChange, value } }) => (
           <TextInput
             placeholder="E.g https://example.com/image.jpg"
@@ -67,12 +90,17 @@ const AddCategoryScreen = () => {
             className="bg-white p-3 rounded-lg border border-gray-200"
           />
         )}
-        />
-        {errors?.imageUrl && <Text className="text-red-500 mt-2">{errors.imageUrl.message}</Text>}
-        <Pressable onPress={handleSubmit(onSubmit)} className="mt-6 bg-black py-3 rounded-lg flex-row justify-center items-center">
-            <Ionicons name="save" size={18} color="#fff" />
-            <Text className="text-white font-semibold ml-2">Create Category</Text>
-        </Pressable>
+      />
+      {errors?.imageUrl && (
+        <Text className="text-red-500 mt-2">{errors.imageUrl.message}</Text>
+      )}
+      <Pressable
+        onPress={handleSubmit(onSubmit)}
+        className="mt-6 bg-black py-3 rounded-lg flex-row justify-center items-center"
+      >
+        <Ionicons name="save" size={18} color="#fff" />
+        <Text className="text-white font-semibold ml-2">Create Category</Text>
+      </Pressable>
     </View>
   );
 };
