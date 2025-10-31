@@ -6,7 +6,7 @@ async function getCategories(req, res) {
   const { page = 1, limit = 10 } = req.query;
   const skip = (page - 1) * limit;
 
-  const categories = await prisma?.categories.findMany({
+  const categories = await prisma?.category.findMany({
     include: { products: true },
     skip: +skip,
     take: +limit,
@@ -14,12 +14,12 @@ async function getCategories(req, res) {
   res.json(categories);
 }
 
-async function getProductByCategory(req, res) {
+async function getProductsByCategory(req, res) {
   const { id } = req.params;
   const { page = 1, limit = 10 } = req.query;
   const skip = (page - 1) * limit;
 
-  const products = await prisma.findMany({
+  const products = await prisma.product.findMany({
     where: { categoryId: id },
     skip: +skip,
     take: +limit,
@@ -29,7 +29,7 @@ async function getProductByCategory(req, res) {
 
 async function createCategory(req, res) {
   const { name, imageUrl } = req.body;
-  const category = await prisma.category.update({
+  const category = await prisma.category.create({
     where: { id },
     data: { name, imageUrl },
   });
@@ -54,4 +54,4 @@ async function deleteCategory(req, res) {
     res.json({ message: "Category and its products deleted "});
 }
 
-module.exports = { getCategories, getProductByCategory, createCategory, updateCategory, deleteCategory };
+module.exports = { getCategories, getProductsByCategory, createCategory, updateCategory, deleteCategory };
