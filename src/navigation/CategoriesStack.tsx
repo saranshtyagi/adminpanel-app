@@ -3,8 +3,15 @@ import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import CategoriesScreen from "../screens/CategoriesScreen";
 import AddCategoryScreen from "../screens/AddCategoryScreen";
+import ProductsScreen from "../screens/ProductsScreen";
 
-const Stack = createNativeStackNavigator();
+type CategoriesStackParamList = {
+  Categories: undefined;
+  AddCategory: undefined;
+  Products: { categoryName?: string };
+};
+
+const Stack = createNativeStackNavigator<CategoriesStackParamList>();
 
 const CategoriesStack = () => {
   return (
@@ -25,6 +32,11 @@ const CategoriesStack = () => {
         name="AddCategory"
         component={AddCategoryScreen}
         options={{ title: "Add Category" }}
+      />
+      <Stack.Screen
+        name="Products"
+        component={ProductsScreen}
+        options={({ route }) => ({ title: `Products in ${route.params?.categoryName || 'Category'}`})}
       />
     </Stack.Navigator>
   );
