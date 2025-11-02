@@ -26,6 +26,7 @@ const AddProductScreen = () => {
     defaultValues: { name: "", price: "", imageUrl: "", description: "" },
   });
 
+
   const mutation = useMutation({
     mutationFn:(data:FormData) => createProduct({...data, price:parseFloat(data.price), categoryId}), 
     onSuccess: () => {
