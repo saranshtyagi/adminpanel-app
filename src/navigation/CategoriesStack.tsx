@@ -4,11 +4,13 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import CategoriesScreen from "../screens/CategoriesScreen";
 import AddCategoryScreen from "../screens/AddCategoryScreen";
 import ProductsScreen from "../screens/ProductsScreen";
+import AddProductScreen from "../screens/AddProductScreen";
 
 type CategoriesStackParamList = {
   Categories: undefined;
   AddCategory: undefined;
   Products: { categoryName?: string };
+  AddProduct: undefined;
 };
 
 const Stack = createNativeStackNavigator<CategoriesStackParamList>();
@@ -37,6 +39,11 @@ const CategoriesStack = () => {
         name="Products"
         component={ProductsScreen}
         options={({ route }) => ({ title: `Products in ${route.params?.categoryName || 'Category'}`})}
+      />
+      <Stack.Screen
+        name="AddProduct"
+        component={AddProductScreen}
+        options={{ title: "Add Product" }}
       />
     </Stack.Navigator>
   );
