@@ -27,7 +27,7 @@ const AddProductScreen = () => {
   });
 
   const mutation = useMutation({
-    mutationFn:(data:FormData) => createProduct({...data, price:parseFloat(data.name), categoryId}), 
+    mutationFn:(data:FormData) => createProduct({...data, price:parseFloat(data.price), categoryId}), 
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["products", categoryId] });
       navigation.goBack();

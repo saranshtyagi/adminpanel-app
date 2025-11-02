@@ -1,4 +1,13 @@
-import { ActivityIndicator, FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  ActivityIndicator,
+  Alert,
+  FlatList,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import React from "react";
 import {
   useNavigation,
@@ -6,8 +15,8 @@ import {
   NavigationProp,
 } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { fetchProductsByCategory } from "../api/apiClient";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { deleteProduct, fetchProductsByCategory } from "../api/apiClient";
 
 type Product = {
   id: string;
@@ -31,11 +40,74 @@ const ProductsScreen = () => {
 
   const queryClient = useQueryClient();
 
-  const {data:products, isLoading, error, refetch} = useQuery<Product[]>({
-    queryKey: ['products', categoryId], 
-    queryFn:() => fetchProductsByCategory(categoryId), 
-    enabled: !!categoryId
+  const {
+    data: products,
+    isLoading,
+    error,
+    refetch,
+  } = useQuery<Product[]>({
+    queryKey: ["products", categoryId],
+    queryFn: () => fetchProductsByCategory(categoryId),
+    enabled: !!categoryId,
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => deleteProduct(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["products", categoryId] });
+    },
   })
+
+  const handleDelete = (id: string, name: string) => {
+    Alert.alert(
+      "Delete Product", 
+      `Are you sure you want to delete ${name}?`,
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: () => deleteMutation.mutate(id),
+        },
+      ]
+    );
+  }
+ 
+  const renderProduct = ({ item }: { item: Product }) => (
+    <View className="bg-white rounded-xl p-4 mx-3 my-2 flex-row items-start shadow">
+      <Image
+        source={{ uri: item?.imageUrl }}
+        className="w-20 h-20 rounded-md mr-4 bg-gray-100"
+      />
+      <View className="flex-1">
+        <Text className="text-base font-semibold text-gray-800">
+          {item?.name}
+        </Text>
+        <Text className="text-sm text-gray-600 mt-1">
+          {item?.price.toFixed(2)}
+        </Text>
+        <Text className="text-sm text-gray-400 mt-2">
+          {item.description
+            ? item.description.length > 80
+              ? item.description.slice(0, 80) + "..."
+              : item.description
+            : "No Description"}
+        </Text>
+      </View>
+
+      <View className="ml-3 justify-between">
+        <TouchableOpacity className="p-2 rounded-md mr-2 bg-blue-50">
+          <Ionicons name="pencil" size={18} color="#256E3EB" />
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => handleDelete(item?.id, item?.name)}
+          className="p-2 rounded-md bg-red-50"
+        >
+          <Ionicons name="trash" size={18} color="#DC2626" />
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
 
   return (
     <View className="flex-1 bg-gray-50">
@@ -44,7 +116,9 @@ const ProductsScreen = () => {
           {categoryName ? `${categoryName}Products` : `Products`}
         </Text>
         <TouchableOpacity
-          onPress={() => navigation.navigate("AddProduct", {categoryId})}
+          onPress={() =>
+            navigation.navigate("AddProduct", { categoryId: categoryId })
+          }
           className="flex-row items-center bg-blue-600 px-3 py-2 rounded-lg"
         >
           <Ionicons name="add-circle" size={18} color="#fff" />
@@ -53,11 +127,20 @@ const ProductsScreen = () => {
       </View>
       {isLoading ? (
         <View>
-            <ActivityIndicator size={"large"} />
+          <ActivityIndicator size={"large"} />
         </View>
       ) : (
-        // <FlatList data={products ?? []} renderItem={renderProduct} keyExtractor={(item) => item.id} />
-        null
+        <FlatList
+          data={products ?? []}
+          renderItem={renderProduct}
+          keyExtractor={(item) => item.id}
+          contentContainerStyle={{ paddingBottom: 24 }}
+          ListEmptyComponent={
+            <Text className="text-center text-gray-500 mt-8">
+              No Products Found
+            </Text>
+          }
+        />
       )}
     </View>
   );
