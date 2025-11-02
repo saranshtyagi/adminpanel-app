@@ -24,6 +24,10 @@ export interface Category {
 
 type RootStackParamList = {
   AddCategory: undefined;
+  EditCategory: {
+    categoryId: string;
+    categoryName: string;
+  };
   Products: {
     categoryId: string;
     categoryName: string;
@@ -93,7 +97,10 @@ const CategoriesScreen = () => {
         </Text>
       </View>
       <View className="flex-row items-center gap-2">
-        <TouchableOpacity className="p-2 rounded-md mr-2 bg-blue-50">
+        <TouchableOpacity onPress={() => navigation.navigate("EditCategory", {
+          categoryId:item.id, 
+          categoryName:item?.name
+        })} className="p-2 rounded-md mr-2 bg-blue-50">
           <Ionicons name="pencil" size={18} color="#256E3EB" />
         </TouchableOpacity>
         <TouchableOpacity
