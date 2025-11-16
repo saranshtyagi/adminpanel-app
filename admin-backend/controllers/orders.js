@@ -64,7 +64,7 @@ async function createRazorpayOrder(req, res) {
 
 async function createOrder(req, res) {
     const {items, totalAmount, address, paymentMethod, paymentId, razorpayOrderId} = req.body;
-    const order = prisma.order.create({
+    const order = await prisma.order.create({
         data: {
             userId: req.user.userId,
             items, 
@@ -120,7 +120,7 @@ async function createOrder(req, res) {
                 </p>
             </div>
             `, 
-            attachements: [
+            attachments: [
                 {
                     fileName: `invoice-${order.id}.pdf`,
                     content: pdfBuffer,
