@@ -56,7 +56,7 @@ model Order {
   user       User     @relation(fields: [userId], references: [id])
   paymentMethod String? @default("ONLINE")
   payentId    String?
-  razorpayOrderId String
+  razorpayOrderId String?
 }
 
 model Category {
