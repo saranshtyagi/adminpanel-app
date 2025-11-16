@@ -55,7 +55,7 @@ model Order {
   createdAt  DateTime @default(now())
   user       User     @relation(fields: [userId], references: [id])
   paymentMethod String? @default("ONLINE")
-  payentId    String?
+  paymentId    String?
   razorpayOrderId String?
 }
 
