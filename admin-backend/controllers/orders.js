@@ -58,7 +58,7 @@ async function updateOrder(req, res) {
 
 async function createRazorpayOrder(req, res) {
     const { amount, currency, receipt } = req.body;
-    const order = await razorpay.create({amount, currency, receipt});
+    const order = await razorpay.orders.create({amount, currency, receipt});
     res.json(order);
 }
 
@@ -117,7 +117,7 @@ async function createOrder(req, res) {
                      <p style="font-size: 12px; color: #666; text-align: center;">If you no longer wish to receive these emails, <a href="https://yourapp.com/unsubscribe?email=${encodeURIComponent(
                         user.email
                      )}" style="color: #2563eb;">unsubscribe here</a>.</p>
-                }</p>
+                </p>
             </div>
             `, 
             attachements: [
